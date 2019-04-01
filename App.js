@@ -7,22 +7,53 @@ import {
   Dimensions,
   Platform
 } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import { Apploading } from "expo";
+import { TextInput, ScrollView } from "react-native-gesture-handler";
+import Todo from "./ToDo";
 
 const { heigh, width } = Dimensions.get("window");
 
 export default class App extends React.Component {
+  state = {
+    newTodo: "",
+    loadedToDos: false
+  };
+  componentDidMount = () => {
+    this._loadToDos();
+  };
   render() {
+    const { newToDo, loadedToDos } = this.state;
+    if (!loadedToDos) {
+      return <Apploading />;
+    }
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
         <Text style={styles.title}>To Do</Text>
         <View style={styles.card}>
-          <TextInput style={styles.input} placeholder={"placeholder"} />
+          <TextInput
+            style={styles.input}
+            placeholder={"placeholder"}
+            value={newToDo}
+            onChangeText={this._controlNewToDo}
+            placeholderTextColor={"#999"}
+            returnKeyType={"done"}
+            autoCorrect={false}
+          />
+          <ScrollView contentContainerStyle={styles.toDos}>
+            <Todo text={"hidd"} />
+          </ScrollView>
         </View>
       </View>
     );
   }
+  _controlNewToDo = text => {
+    this.setState({
+      newToDo: text
+    });
+  };
+
+  _loadToDos = () => {};
 }
 
 const styles = StyleSheet.create({
@@ -51,5 +82,14 @@ const styles = StyleSheet.create({
         elevation: 3
       }
     })
+  },
+  input: {
+    padding: 20,
+    borderBottomColor: "#bbb",
+    borderBottomWidth: 1,
+    fontSize: 25
+  },
+  toDos: {
+    alignItems: "center"
   }
 });
