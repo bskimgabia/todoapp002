@@ -7,16 +7,19 @@ import {
   Dimensions,
   Platform
 } from "react-native";
-import { Apploading } from "expo";
+import { AppLoading } from "expo";
 import { TextInput, ScrollView } from "react-native-gesture-handler";
 import Todo from "./ToDo";
+import uuidv1 from "uuid/v1";
 
 const { heigh, width } = Dimensions.get("window");
 
 export default class App extends React.Component {
   state = {
-    newTodo: "",
-    loadedToDos: false
+    newToDo: "",
+    // abc
+    loadedToDos: false,
+    toDos: {}
   };
   componentDidMount = () => {
     this._loadToDos();
@@ -24,7 +27,7 @@ export default class App extends React.Component {
   render() {
     const { newToDo, loadedToDos } = this.state;
     if (!loadedToDos) {
-      return <Apploading />;
+      return <AppLoading />;
     }
     return (
       <View style={styles.container}>
@@ -39,6 +42,7 @@ export default class App extends React.Component {
             placeholderTextColor={"#999"}
             returnKeyType={"done"}
             autoCorrect={false}
+            onSubmitEditing={this._addToDo}
           />
           <ScrollView contentContainerStyle={styles.toDos}>
             <Todo text={"hidd"} />
@@ -52,8 +56,52 @@ export default class App extends React.Component {
       newToDo: text
     });
   };
+  _loadToDos = () => {
+    this.setState({
+      loadedToDos: true
+    });
+  };
+  _addToDo = () => {
+    const { newToDo } = this.state;
+    // 'abc'
+    if (newToDo !== "") {
+      this.setState(prevState => {
+        const ID = uuidv1();
+        const newToDoObject = {
+          [ID]: {
+            id: ID,
+            // 1234
+            isCompleted: false,
+            text: newToDo,
+            // abc
+            createdAt: Date.now()
+          }
+        };
+        const newState = {
+          ...prevState,
+          // newTodo : abc
+          // loadedTodos: true,
+          // toDos: {}
 
-  _loadToDos = () => {};
+          newTodo: "",
+          // newTodo : ""
+
+          toDos: {
+            ...prevState.toDos,
+            // {}
+            ...newToDoObject
+            // [123]: {
+            // id: 123
+            // isCompleted:false
+            // text: abc
+            // createdAt: Date.now()
+            //
+          }
+        };
+        return { ...newState };
+      });
+    }
+  };
 }
 
 const styles = StyleSheet.create({
